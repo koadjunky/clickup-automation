@@ -1,21 +1,15 @@
-import json
-from pathlib import Path
+import os
 from typing import List
 import requests
+from dotenv import load_dotenv
 
 
-def get_key():
-    config_path = Path.home() / ".config" / "clickup" / "api_token.json"
-    with open(config_path, "r") as config_file:
-        config = json.load(config_file)
-    return config["api_key"]
-
-
-key = get_key()
+load_dotenv()
+CLICKUP_KEY = os.environ.get('CLICKUP_KEY')
 
 
 def clickup_query(path : str) -> dict:
-    headers = {'Authorization': key}
+    headers = {'Authorization': CLICKUP_KEY}
     response = requests.get("http://api.clickup.com/api/v2" + path, headers=headers)
     return response.json()
 

@@ -75,4 +75,4 @@ if __name__ == '__main__':
     list_ids = get_lists(space_ids, folder_ids) # ['65455262', '181690923', '198367334', '198386194', '63597033', '65455246', '84170410',
                                                 #  '144556532', '162390920', '181668282', '192354483', '192370658', '192370662']
     print(f"List ids: {list_ids}")
-    pprint.pprint(get_tasks(list_ids[0]))
+    pprint.pprint(get_tasks(list_ids[0:1]))

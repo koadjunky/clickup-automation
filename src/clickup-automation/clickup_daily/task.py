@@ -4,6 +4,21 @@ class Task:
 
     def __init__(self, data: dict):
         self.data = data
+        self.updates = {}
+
+    def is_dirty(self):
+        return bool(self.updates)
+
+    def get_status(self):
+        if 'status' in self.updates:
+            return self.updates['status']
+        return self.data['status']['status']
+
+    def set_status(self, status):
+        if status == self.data['status']['status']:
+            del self.updates['status']
+        else:
+            self.updates['status'] = status
 
     def get_start_date(self):
         timestamp = self.data["start_date"]
@@ -17,7 +32,7 @@ class Task:
     def __ts_to_dt(timestamp):
         if timestamp is None:
             return None
-        return pendulum.from_timestamp(int(timestamp) // 1000)
+        return pendulum.from_timestamp(int(timestamp) // 1000, tz='Europe/Warsaw')
 
 
 if __name__ == '__main__':
@@ -87,3 +102,11 @@ if __name__ == '__main__':
     # It seems, we cannot distinguish due_date and due_date_time at 4:00 (or 2:00 UTC)
     print(task.get_start_date())
     print(task.get_due_date())
+    print("Should be today:", task.get_status())
+    print("Should be not dirty:", task.is_dirty())
+    task.set_status('this week')
+    print("Should be this week:", task.get_status())
+    print("Should be dirty:", task.is_dirty())
+    task.set_status('today')
+    print("Should be today:", task.get_status())
+    print("Should be not dirty:", task.is_dirty())

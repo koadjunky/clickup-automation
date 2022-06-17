@@ -15,9 +15,12 @@ class Task:
         return self.data['status']['status']
 
     def set_status(self, status):
-        if status == self.data['status']['status']:
+        name = self.data["name"]
+        if 'status' in self.updates and status == self.data['status']['status']:
+            print(f"Clearing status of task: {name}")
             del self.updates['status']
-        else:
+        if status != self.data['status']['status']:
+            print(f"Setting status '{status}' of task: {name}")
             self.updates['status'] = status
 
     def get_start_date(self):

@@ -1,6 +1,7 @@
 import pendulum
 from task import Task
 
+
 def update_status(task: Task):
     now = pendulum.now(tz="Europe/Warsaw")
     day_end = now.end_of('day')
@@ -13,6 +14,7 @@ def update_status(task: Task):
         task.set_status("this week")
     elif task.get_due_date() is not None and task.get_due_date() < week_end:
         task.set_status("this week")
+
 
 if __name__ == "__main__":
     from clickup import get_teams, get_spaces, get_folders, get_lists, get_tasks

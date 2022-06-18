@@ -6,6 +6,19 @@ class Task:
         self.data = data
         self.updates = {}
 
+    # TODO: Generic accessor method
+    def get_id(self):
+        return self.data['id']
+
+    def get_name(self):
+        return self.data['name']
+
+    def get_old_status(self):
+        return self.data['status']['status']
+
+    def get_new_status(self):
+        return self.updates['status']
+
     def is_dirty(self):
         return bool(self.updates)
 
@@ -16,11 +29,12 @@ class Task:
 
     def set_status(self, status):
         name = self.data["name"]
+        id = self.data["id"]
         if 'status' in self.updates and status == self.data['status']['status']:
             print(f"Clearing status of task: {name}")
             del self.updates['status']
         if status != self.data['status']['status']:
-            print(f"Setting status '{status}' of task: {name}")
+            print(f"Setting status '{status}' of task: {name}, id: {id}")
             self.updates['status'] = status
 
     def get_start_date(self):

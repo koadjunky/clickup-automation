@@ -2,7 +2,7 @@
 
 This project contains source code and supporting files for a serverless application that you can deploy with the SAM CLI. It includes the following files and folders.
 
-- hello_world - Code for the application's Lambda function.
+- clickup_daily - Code for the application's Lambda function.
 - events - Invocation events that you can use to invoke the function.
 - tests - Unit tests for the application code. 
 - template.yaml - A template that defines the application's AWS resources.
@@ -23,6 +23,17 @@ The AWS Toolkit is an open source plug-in for popular IDEs that uses the SAM CLI
 * [DataGrip](https://docs.aws.amazon.com/toolkit-for-jetbrains/latest/userguide/welcome.html)
 * [VS Code](https://docs.aws.amazon.com/toolkit-for-vscode/latest/userguide/welcome.html)
 * [Visual Studio](https://docs.aws.amazon.com/toolkit-for-visual-studio/latest/user-guide/welcome.html)
+
+## Validate the template.yaml file
+
+Use cfn-lint linter:
+
+```bash
+python -m venv .venv
+. .venv/bin/activate
+pip install -r requirements.txt
+cfn-lint template.yaml
+```
 
 ## Deploy the sample application
 
@@ -66,7 +77,7 @@ Test a single function by invoking it directly with a test event. An event is a 
 Run functions locally and invoke them with the `sam local invoke` command.
 
 ```bash
-clickup-automation$ sam local invoke HelloWorldFunction --event events/event.json
+clickup-automation$ sam local invoke ClickupDailyFunction --event events/manual.json --env-vars env.json
 ```
 
 The SAM CLI can also emulate your application's API. Use the `sam local start-api` to run the API locally on port 3000.
@@ -80,10 +91,10 @@ The SAM CLI reads the application template to determine the API's routes and the
 
 ```yaml
       Events:
-        HelloWorld:
+        ClickupDailyFunction:
           Type: Api
           Properties:
-            Path: /hello
+            Path: /daily
             Method: get
 ```
 
@@ -97,7 +108,7 @@ To simplify troubleshooting, SAM CLI has a command called `sam logs`. `sam logs`
 `NOTE`: This command works for all AWS Lambda functions; not just the ones you deploy using SAM.
 
 ```bash
-clickup-automation$ sam logs -n HelloWorldFunction --stack-name clickup-automation --tail
+clickup-automation$ sam logs -n ClickupDailyFunction --stack-name clickup-automation --tail
 ```
 
 You can find more information and examples about filtering Lambda function logs in the [SAM CLI Documentation](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-logging.html).
@@ -112,7 +123,7 @@ clickup-automation$ pip install -r tests/requirements.txt --user
 clickup-automation$ python -m pytest tests/unit -v
 # integration test, requiring deploying the stack first.
 # Create the env variable AWS_SAM_STACK_NAME with the name of the stack we are testing
-clickup-automation$ AWS_SAM_STACK_NAME=<stack-name> python -m pytest tests/integration -v
+clickup-automation$ AWS_SAM_STACK_NAME=clickup-automation python -m pytest tests/integration -v
 ```
 
 ## Cleanup

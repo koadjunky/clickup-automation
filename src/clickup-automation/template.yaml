@@ -35,7 +35,7 @@ Resources:
         Timer:
           Type: Schedule
           Properties:
-            Schedule: cron(0 4 * * ? *)
+            Schedule: cron(30 2 * * ? *)
             Name: daily-schedule
             Description: Daily schedule
             Enabled: True

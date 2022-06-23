@@ -2,6 +2,21 @@ import pendulum
 from task import Task
 
 
+def update_due_date(task: Task):
+    due_date = task.get_due_date()
+    day_start = pendulum.now(tz='Europe/Warsaw').start_of('day')
+    if due_date is None or due_date > day_start:
+        return
+    recurring = task.get_custom_fields().get('recurring', ['false'])
+    if 'daily' in recurring:
+        due_date = pendulum.now(tz='Europe/Warsaw').at(4, 0, 0)
+        task.set_due_date(due_date)
+    elif 'weekly' in recurring:
+        while due_date < day_start:
+            due_date = due_date.add(weeks=1)
+        task.set_due_date(due_date)
+
+
 def update_status(task: Task):
     now = pendulum.now(tz="Europe/Warsaw")
     day_end = now.end_of('day')

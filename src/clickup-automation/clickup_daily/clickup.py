@@ -98,5 +98,5 @@ if __name__ == '__main__':
 #                                                #  '144556532', '162390920', '181668282', '192354483', '192370658', '192370662']
 #    print(f"List ids: {list_ids}")
 #    pprint.pprint(get_tasks(['181668282']))
-    update_task('2cwtuap', {'status': 'this week'})
-    #print(get_task('2cwtuap'))
+    #update_task('2cwtuap', {'status': 'this week'})
+    print(get_task('2cwtuap'))

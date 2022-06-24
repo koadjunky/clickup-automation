@@ -1,7 +1,22 @@
 import pendulum
 from task import Task
+from typing import Callable, Any
+from loguru import logger
 
 
+def safe(func: Callable[..., None]) -> Callable[..., None]:
+    """Catches and logs any exception."""
+
+    def wrapper(*args: Any, **kwargs: Any) -> None:
+        try:
+            return func(*args, **kwargs)
+        except:
+            logger.exception(f"Exception in function {func.__name__}")
+
+    return wrapper
+
+
+@safe
 def update_due_date(task: Task):
     due_date = task.get_due_date()
     day_start = pendulum.now(tz='Europe/Warsaw').start_of('day')
@@ -17,6 +32,7 @@ def update_due_date(task: Task):
         task.set_due_date(due_date)
 
 
+@safe
 def update_status(task: Task):
     now = pendulum.now(tz="Europe/Warsaw")
     day_end = now.end_of('day')
@@ -39,4 +55,5 @@ if __name__ == "__main__":
     list_ids = get_lists(space_ids, folder_ids)
     tasks = get_tasks(list_ids)
     for task in tasks:
+        update_due_date(Task(task))
         update_status(Task(task))

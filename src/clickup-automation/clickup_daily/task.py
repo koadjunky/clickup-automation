@@ -8,65 +8,66 @@ class Task:
 
     # TODO: Generic accessor method
     def get_id(self):
-        return self.data['id']
+        return self.data.get('id', None)
 
     def get_name(self):
-        return self.data['name']
+        return self.data.get('name', 'UNKNOWN')
 
     def get_old_status(self):
-        return self.data['status']['status']
+        return self.data.get('status', {}).get('status', 'UNKNOWN')
 
     def get_new_status(self):
-        return self.updates['status']
+        return self.updates.get('status', 'NOT SET')
 
     def is_dirty(self):
         return bool(self.updates)
 
     def get_status(self):
         if 'status' in self.updates:
-            return self.updates['status']
-        return self.data['status']['status']
+            return self.get_new_status()
+        return self.get_old_status()
 
     def set_status(self, status):
-        name = self.data["name"]
-        id = self.data["id"]
-        if 'status' in self.updates and status == self.data['status']['status']:
+        name = self.get_name()
+        id = self.get_id()
+        if 'status' in self.updates and status == self.get_old_status():
             print(f"Clearing status of task: {name}")
             del self.updates['status']
-        if status != self.data['status']['status']:
+        if status != self.get_old_status():
             print(f"Setting status '{status}' of task: {name}, id: {id}")
             self.updates['status'] = status
 
     def get_start_date(self):
-        timestamp = self.data["start_date"]
+        timestamp = self.data.get("start_date", None)
         return Task.__ts_to_dt(timestamp)
 
     def get_due_date(self):
-        timestamp = self.updates.get('due_date', self.data['due_date'])
+        timestamp = self.updates.get('due_date', self.data.get('due_date', None))
         return Task.__ts_to_dt(timestamp)
 
     def set_due_date(self, dt: pendulum.DateTime) -> None:
-        name = self.data['name']
+        name = self.get_name()
         timestamp = Task.__dt_to_ts(dt)
-        if 'due_date' in self.updates and timestamp == self.data['due_date']:
+        if 'due_date' in self.updates and timestamp == self.data.get('due_date', None):
             print(f"Clearing due date of task: {name}")
             del self.updates['due_date']
             del self.updates['due_date_time']
-        if timestamp != self.data['due_date']:
+        if timestamp != self.data.get('due_date', None):
             print(f"Setting due date of task: {name} to {dt}")
             self.updates['due_date'] = timestamp
             self.updates['due_date_time'] = False
 
     def get_custom_fields(self):
         result = {}
-        for field in self.data['custom_fields']:
-            name = field['name']
+        for field in self.data.get('custom_fields', []):
+            name = field.get('name', 'UNKNOWN')
             options = {}
-            for option in field['type_config']['options']:
-                options[option['id']] = option['label']
+            for option in field.get('type_config', {}).get('options', []):
+                if 'label' in option: options[option['id']] = option['label']
             value = []
-            for option_id in field['value']:
-                value.append(options[option_id])
+            for option_id in field.get('value', []):
+                if option_id in options:
+                    value.append(options[option_id])
             result[name] = value
         return result
 

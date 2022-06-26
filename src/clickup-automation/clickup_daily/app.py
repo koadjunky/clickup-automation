@@ -1,7 +1,14 @@
+import os
 import json
 from main import main
+from dotenv import load_dotenv
+from discord_interactions import verify_key
 
 # import requests
+
+
+load_dotenv()
+DISCORD_PUBLIC_KEY = os.environ.get('DISCORD_PUBLIC_KEY')
 
 
 def lambda_handler(event, context):
@@ -40,3 +47,19 @@ def lambda_handler(event, context):
         "statusCode": 200,
         "body": "Completed"
     }
+
+
+
+def integrations(event, context):
+    signature = event["headers"]["X-Signature-Ed25519"]
+    timestamp = event["headers"]["X-Signature-Timestamp"]
+    if verify_key(event.body, signature, timestamp, DISCORD_PUBLIC_KEY):
+        return {
+            "statusCode": 200,
+            "body": "Success"
+        }
+    else:
+        return {
+            "statusCode": 401,
+            "body": "Auth error"
+        }

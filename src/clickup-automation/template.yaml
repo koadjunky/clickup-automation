@@ -39,6 +39,20 @@ Resources:
             Name: daily-schedule
             Description: Daily schedule
             Enabled: True
+  DiscordInteractionsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: interactions/
+      Handler: app.interactions
+      Runtime: python3.9
+      Architectures:
+       - x86_64
+      Events:
+        Manual:
+          Type: Api
+          Properties:
+            Path: /interactions
+            Method: post
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
@@ -47,9 +61,15 @@ Outputs:
   ClickupDailyApi:
     Description: "API Gateway endpoint URL for Prod stage for ClickUp Daily function"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/daily/"
+  DiscordInteractionsApi:
+    Description: "API Gateway endpoint URL for Prod stage for Discord Interations function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/interactions/"
   ClickupDailyFunction:
     Description: "ClickupDaily Lambda Function ARN"
     Value: !GetAtt ClickupDailyFunction.Arn
+  DiscordInteractionsFunction:
+    Description: "Discord Interactions Lambda Function ARN"
+    Value: !GetAtt DiscordInteractionsFunction.Arn
   ClickupDailyIamRole:
     Description: "Implicit IAM Role created for Clickup Daily function"
     Value: !GetAtt ClickupDailyFunctionRole.Arn

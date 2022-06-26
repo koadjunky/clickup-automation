@@ -2,6 +2,7 @@ import os
 import json
 from main import main
 from dotenv import load_dotenv
+from loguru import logger
 from discord_interactions import verify_key
 
 # import requests
@@ -50,16 +51,17 @@ def lambda_handler(event, context):
 
 
 
-def integrations(event, context):
-    signature = event["headers"]["X-Signature-Ed25519"]
-    timestamp = event["headers"]["X-Signature-Timestamp"]
-    if verify_key(event.body, signature, timestamp, DISCORD_PUBLIC_KEY):
+def interactions(event, context):
+    logger.info(event)
+    signature = event["headers"]["x-signature-ed25519"]
+    timestamp = event["headers"]["x-signature-timestamp"]
+    if verify_key(event["body"].encode(), signature, timestamp, DISCORD_PUBLIC_KEY):
         return {
             "statusCode": 200,
-            "body": "Success"
+            "body": json.dumps({'type': 1})
         }
     else:
         return {
             "statusCode": 401,
-            "body": "Auth error"
+            "body": json.dumps("Bad Signature")
         }

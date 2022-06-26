@@ -42,7 +42,7 @@ Resources:
   DiscordInteractionsFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: interactions/
+      CodeUri: clickup_daily/
       Handler: app.interactions
       Runtime: python3.9
       Architectures:

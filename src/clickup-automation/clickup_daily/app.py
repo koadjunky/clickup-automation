@@ -56,10 +56,17 @@ def interactions(event, context):
     signature = event["headers"]["x-signature-ed25519"]
     timestamp = event["headers"]["x-signature-timestamp"]
     if verify_key(event["body"].encode(), signature, timestamp, DISCORD_PUBLIC_KEY):
-        return {
-            "statusCode": 200,
-            "body": json.dumps({'type': 1})
-        }
+        body = json.loads(event["body"])
+        if body["type"] == 1:
+            return {
+                "statusCode": 200,
+                "body": json.dumps({'type': 1})
+            }
+        else:
+            return {
+                "statusCode": 200,
+                "body": json.dumps({'type': 4, 'data': {'content': 'Hello!', 'tts': False, 'embeds': [], 'allowed_mentions': { 'parse': []}}})
+            }
     else:
         return {
             "statusCode": 401,
